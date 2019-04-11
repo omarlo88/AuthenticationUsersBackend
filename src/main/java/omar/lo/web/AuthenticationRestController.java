@@ -85,8 +85,9 @@ public class AuthenticationRestController {
 
         String fileName = file.getOriginalFilename();
         String newFileName = userForm.getUsername();
-        String modifiedFileName = FilenameUtils.getBaseName(newFileName) + "_" + System.currentTimeMillis()
-                + "." + FilenameUtils.getExtension(fileName);
+        /*String modifiedFileName = FilenameUtils.getBaseName(newFileName) + "_" + System.currentTimeMillis()
+                + "." + FilenameUtils.getExtension(fileName);*/
+        String modifiedFileName = FilenameUtils.getBaseName(newFileName) + "." + FilenameUtils.getExtension(fileName);
 
         File serveurFile = new File(servletContext.getRealPath("/usersImage/" + File.separator + modifiedFileName));
         try {
@@ -94,8 +95,7 @@ public class AuthenticationRestController {
             //FileUtils.writeByteArrayToFile(serveurFile, file.getBytes()); # Uitlisation de la librairie org.apache.commons.io pour écrire le fichier
 
 
-            Files.write(Paths.get(servletContext.getRealPath("/usersImage") + "/" +newFileName + "_" +
-                            + System.currentTimeMillis()
+            Files.write(Paths.get(servletContext.getRealPath("/usersImage") + "/" +newFileName
                             + "." + FilenameUtils.getExtension(fileName)),
                     file.getBytes()); //# Files de java.nio de java 8 pour écrire le fichier
 
@@ -125,40 +125,10 @@ public class AuthenticationRestController {
         return appUser;
     }
 
-    @GetMapping("/Users/PhotoUser/{username}")
-    public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){
-        Map<String, String> hm = new HashMap<>();
-        String filesPath = servletContext.getRealPath("/usersImage");
-        File fileFolder = new File(filesPath); // File de java 7
-        if (fileFolder != null){
-            for (File file : fileFolder.listFiles()) {
-                if (!file.isDirectory() && file.getName().startsWith(username)){
-                    String encodeBase64;
-                    try {
-                        String extensionFile = FilenameUtils.getExtension(file.getName());
-                        FileInputStream fileInputStream = new FileInputStream(file);
-                        byte[] bytes = new byte[(int) file.length()];
-                        fileInputStream.read(bytes);
-                        encodeBase64 = Base64.getEncoder().encodeToString(bytes);
-                        //String photo = extensionFile + ";base64," + encodeBase64;
-                        hm.put("extensionFile", extensionFile);
-                        hm.put("photo", encodeBase64);
-                        fileInputStream.close();
-                    } catch (Exception e){
-                        e.printStackTrace();
-                        System.out.println("AuthenticationRestController.getPhotouser(): " + e.getMessage());
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-        return new ResponseEntity<>(hm, HttpStatus.OK);
-    }
-
+    //@GetMapping(value = "/Users/PhotoUserNew/{username}", produces = MediaType.IMAGE_JPEG_VALUE)
     @GetMapping("/Users/PhotoUserNew/{username}")
-    public byte[] getPhotoUserNew(@PathVariable String username){
+    public String getPhotoUserNew(@PathVariable String username){ //Files java.n.io
         Path path = Paths.get(servletContext.getRealPath("/usersImage/"));
-        System.out.println("test "+path);
         boolean isExiste = Files.isDirectory(path);
         AppUser p = accountService.loadUserByUsername(username);
         String nameFile = p.getPhotoName();
@@ -190,13 +160,44 @@ public class AuthenticationRestController {
 
                 //return Files.readAllBytes(Paths.get(servletContext.getRealPath("/usersImage/"), nameFile));
 
-                return Files.readAllBytes(Paths.get(servletContext.getRealPath("/usersImage/" + nameFile)));
+                return Base64.getEncoder().encodeToString(Files.readAllBytes(Paths
+                        .get(servletContext.getRealPath("/usersImage/" + nameFile))));
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return null;
+    }
+
+    @GetMapping("/Users/PhotoUser/{username}")
+    public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){ //File de java 7
+        Map<String, String> hm = new HashMap<>();
+        String filesPath = servletContext.getRealPath("/usersImage");
+        File fileFolder = new File(filesPath); // File de java 7
+        if (fileFolder != null){
+            for (File file : fileFolder.listFiles()) {
+                if (!file.isDirectory() && file.getName().startsWith(username)){
+                    String encodeBase64;
+                    try {
+                        String extensionFile = FilenameUtils.getExtension(file.getName());
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        byte[] bytes = new byte[(int) file.length()];
+                        fileInputStream.read(bytes);
+                        encodeBase64 = Base64.getEncoder().encodeToString(bytes);
+                        //String photo = extensionFile + ";base64," + encodeBase64;
+                        hm.put("extensionFile", extensionFile);
+                        hm.put("photo", encodeBase64);
+                        fileInputStream.close();
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        System.out.println("AuthenticationRestController.getPhotouser(): " + e.getMessage());
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return new ResponseEntity<>(hm, HttpStatus.OK);
     }
 
     @GetMapping("/Users")
