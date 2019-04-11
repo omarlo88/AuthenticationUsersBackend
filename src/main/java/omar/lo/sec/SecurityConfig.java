@@ -32,7 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login/**", "/AuthenticationRestController/register/**",
-                "/AuthenticationRestController/registerServeurFile/**").permitAll();
+                "/AuthenticationRestController/registerServeurFile/**",
+                "/AuthenticationRestController/Users/PhotoUserNew/**").permitAll();
         http.authorizeRequests().antMatchers("/AuthenticationRestController/**").hasAuthority("ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new JWTAuthenticationFilter(objectMapper, authenticationManager()));

@@ -4,22 +4,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import omar.lo.entities.AppRole;
 import omar.lo.entities.AppUser;
 import omar.lo.metier.AccountServiceImpl;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/AuthenticationRestController")
@@ -66,10 +70,19 @@ public class AuthenticationRestController {
     @PostMapping("/registerServeurFile")
     public AppUser registerServeurFile(@RequestParam("file") MultipartFile file, String user) throws IOException {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
-        boolean isExiste = new File(servletContext.getRealPath("/usersImage/")).exists();
+
+        // boolean isExiste = new File(servletContext.getRealPath("/usersImage/")).exists(); // File de java 7
+
+        boolean isExiste1 = Files.isDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));// Utilisation de java.nio de java 8
+
+        if (!isExiste1){ // Files de java.nio de java 8
+            Files.createDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));
+        }
+        /*
         if (!isExiste){
             new File(servletContext.getRealPath("/usersImage/")).mkdir();
-        }
+        } File de java 7*/
+
         String fileName = file.getOriginalFilename();
         String newFileName = userForm.getUsername();
         String modifiedFileName = FilenameUtils.getBaseName(newFileName) + "_" + System.currentTimeMillis()
@@ -77,7 +90,15 @@ public class AuthenticationRestController {
 
         File serveurFile = new File(servletContext.getRealPath("/usersImage/" + File.separator + modifiedFileName));
         try {
-            FileUtils.writeByteArrayToFile(serveurFile, file.getBytes());
+
+            //FileUtils.writeByteArrayToFile(serveurFile, file.getBytes()); # Uitlisation de la librairie org.apache.commons.io pour écrire le fichier
+
+
+            Files.write(Paths.get(servletContext.getRealPath("/usersImage") + "/" +newFileName + "_" +
+                            + System.currentTimeMillis()
+                            + "." + FilenameUtils.getExtension(fileName)),
+                    file.getBytes()); //# Files de java.nio de java 8 pour écrire le fichier
+
         } catch (Exception e){
             System.out.println("AuthenticationRestController.registerServeur(): " + e.getMessage());
             e.printStackTrace();
@@ -108,7 +129,7 @@ public class AuthenticationRestController {
     public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){
         Map<String, String> hm = new HashMap<>();
         String filesPath = servletContext.getRealPath("/usersImage");
-        File fileFolder = new File(filesPath);
+        File fileFolder = new File(filesPath); // File de java 7
         if (fileFolder != null){
             for (File file : fileFolder.listFiles()) {
                 if (!file.isDirectory() && file.getName().startsWith(username)){
@@ -132,6 +153,50 @@ public class AuthenticationRestController {
             }
         }
         return new ResponseEntity<>(hm, HttpStatus.OK);
+    }
+
+    @GetMapping("/Users/PhotoUserNew/{username}")
+    public byte[] getPhotoUserNew(@PathVariable String username){
+        Path path = Paths.get(servletContext.getRealPath("/usersImage/"));
+        System.out.println("test "+path);
+        boolean isExiste = Files.isDirectory(path);
+        AppUser p = accountService.loadUserByUsername(username);
+        String nameFile = p.getPhotoName();
+
+        /*try {
+            Files.list(path)
+                    .map(f -> f.toString())
+                    .filter(f -> f.endsWith(".jpg"))
+                    .map(f -> f.getBytes())
+                    .collect(Collectors.toList());
+            //.map(f -> f.getBytes())
+                    //.map(f -> Base64.getEncoder().encodeToString(f))
+                    //.map(f -> Base64.getDecoder().decode(f).toString())
+                    //.collect(Collectors.toList())
+                    //.forEach(System.out::println);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+
+        if (isExiste){
+
+            try {
+                /*Files.list(path)
+                        .map(Path::toString)
+                        .filter(f -> f.contains(username))
+                        .forEach(System.out::println);*/
+
+                //return Files.readAllBytes(Paths.get(servletContext.getRealPath("/usersImage/"), nameFile));
+
+                return Files.readAllBytes(Paths.get(servletContext.getRealPath("/usersImage/" + nameFile)));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     @GetMapping("/Users")
