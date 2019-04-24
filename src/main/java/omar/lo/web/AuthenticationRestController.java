@@ -198,10 +198,6 @@ public class AuthenticationRestController {
         return new ResponseEntity<>(hm, HttpStatus.OK);
     }
 
-    public AuthenticationRestController() {
-        super();
-    }
-
     @GetMapping("/Users")
     public List<AppUser> getUsers(){
         return accountService.getAppUsers();
