@@ -23,7 +23,7 @@ import java.util.List;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    /* Le Autowired ne marche pas ici */
+    /* Le Autowired ne marche pas ici par cette classe n'a pas d'annotation spring */
 
     private ObjectMapper objectMapper;
     private AuthenticationManager authenticationManager;
@@ -55,9 +55,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         User userSpring = (User) authResult.getPrincipal();
         List<String> roles = new ArrayList<>();
-        authResult.getAuthorities().forEach(auth -> {
+        /*authResult.getAuthorities().forEach(auth -> {
             roles.add(auth.getAuthority());
-        });
+        });*/
+
+        authResult.getAuthorities().forEach(auth -> roles.add(auth.getAuthority()));
 
         String jwt = JWT.create()
                 .withIssuer(request.getRequestURI())

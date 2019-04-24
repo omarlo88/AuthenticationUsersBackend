@@ -8,7 +8,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/AuthenticationRestController")
@@ -71,9 +68,9 @@ public class AuthenticationRestController {
     public AppUser registerServeurFile(@RequestParam("file") MultipartFile file, String user) throws IOException {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
 
-        // boolean isExiste = new File(servletContext.getRealPath("/usersImage/")).exists(); // File de java 7
+        // boolean isExiste = new File(servletContext.getRealPath("/usersImage/")).exists(); // File de java io
 
-        boolean isExiste1 = Files.isDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));// Utilisation de java.nio de java 8
+        boolean isExiste1 = Files.isDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));// Utilisation de java.nio de java
 
         if (!isExiste1){ // Files de java.nio de java 8
             Files.createDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));
@@ -160,8 +157,9 @@ public class AuthenticationRestController {
 
                 //return Files.readAllBytes(Paths.get(servletContext.getRealPath("/usersImage/"), nameFile));
 
-                return Base64.getEncoder().encodeToString(Files.readAllBytes(Paths
-                        .get(servletContext.getRealPath("/usersImage/" + nameFile))));
+                return Base64.getEncoder().encodeToString(
+                        Files.readAllBytes(
+                        Paths.get(servletContext.getRealPath("/usersImage/" + nameFile))));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -198,6 +196,10 @@ public class AuthenticationRestController {
             }
         }
         return new ResponseEntity<>(hm, HttpStatus.OK);
+    }
+
+    public AuthenticationRestController() {
+        super();
     }
 
     @GetMapping("/Users")
@@ -237,7 +239,7 @@ public class AuthenticationRestController {
 
     @DeleteMapping("/Users")
     public ResponseEntity<String> deleteAllUsers(){
-        accountService.deleteAllusers();
+        accountService.deleteAllUsers();
         return new ResponseEntity<>("Suppression réussie!!", HttpStatus.OK);
     }
 

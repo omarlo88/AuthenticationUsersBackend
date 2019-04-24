@@ -23,7 +23,7 @@ public interface AccountService {
     void deleteRole(Long id);
     void deleteRoleUser(String username, String roleName);
     void deleteAllRoles();
-    void deleteAllusers();
+    void deleteAllUsers();
     void activedDisabledUser(String username);
     void accountUserNonExpired(String username);
     void credentialsUserNonExpired(String username);

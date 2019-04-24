@@ -151,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAllusers() {
+    public void deleteAllUsers() {
         appRoleRepository.deleteAll();
     }
 

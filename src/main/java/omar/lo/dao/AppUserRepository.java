@@ -6,8 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 
-@RepositoryRestResource
+//@RepositoryRestResource
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     AppUser findByUsername(String username);
