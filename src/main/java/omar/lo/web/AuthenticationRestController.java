@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -50,7 +52,7 @@ public class AuthenticationRestController {
         appUser.setEmail(userForm.getEmail());
         appUser.setPhoto(file.getBytes());
         appUser.setPhotoName(file.getOriginalFilename());
-        appUser.setDateCreation(new Date());
+        appUser.setDateCreation(LocalDateTime.now());
         accountService.saveUser(appUser);
         accountService.addRoleToUser(username, "USER");
 
@@ -116,7 +118,7 @@ public class AuthenticationRestController {
         //appUser.setPhoto(file.getBytes());
         //appUser.setPhotoName(file.getOriginalFilename());
         appUser.setPhotoName(modifiedFileName);
-        appUser.setDateCreation(new Date());
+        appUser.setDateCreation(LocalDateTime.now());
         accountService.saveUser(appUser);
         accountService.addRoleToUser(username, "USER");
         return appUser;
@@ -169,7 +171,7 @@ public class AuthenticationRestController {
     }
 
     @GetMapping("/Users/PhotoUser/{username}")
-    public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){ //File de java 7
+    public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){ //File de java old
         Map<String, String> hm = new HashMap<>();
         String filesPath = servletContext.getRealPath("/usersImage");
         File fileFolder = new File(filesPath); // File de java 7

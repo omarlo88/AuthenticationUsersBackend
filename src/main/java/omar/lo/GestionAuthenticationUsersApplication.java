@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @SpringBootApplication
@@ -24,9 +26,9 @@ public class GestionAuthenticationUsersApplication {
 		return args -> {
             /*accountService.saveUser(new AppUser(null, "Lo", "Omar", "admin", "123",
                     "admin@gmail.com", true, true, true, true, null,
-                    null, new Date(), null));
+                    null, LocalDateTime.now(), null));
             accountService.saveUser(new AppUser(null, "Savadogo", "Haoua", "user", "123",
-                    "user@gmail.com", true, true, true, true, null, null, new Date(), null));
+                    "user@gmail.com", true, true, true, true, null, null, LocalDateTime.now(), null));
 
             accountService.saveRole(new AppRole(null, "ADMIN"));
             accountService.saveRole(new AppRole(null, "USER"));
@@ -34,8 +36,8 @@ public class GestionAuthenticationUsersApplication {
             accountService.addRoleToUser("admin", "ADMIN");
             accountService.addRoleToUser("admin", "USER");
             accountService.addRoleToUser("user", "USER");
-*/
-            //accountService.getAppUsers().forEach(System.out::println);
+
+            accountService.getAppUsers().forEach(System.out::println);*/
 		};
 
 	}

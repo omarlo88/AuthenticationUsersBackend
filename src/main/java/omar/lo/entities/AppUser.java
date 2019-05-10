@@ -6,10 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
@@ -47,7 +50,9 @@ public class AppUser {
     @Column(name = "photo_name")
     private String photoName;
     @Column(name = "date_creation")
-    private Date dateCreation;
+    //private Instant dateCreation;
+    //@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime dateCreation;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<AppRole> roles = new TreeSet<>();
 
