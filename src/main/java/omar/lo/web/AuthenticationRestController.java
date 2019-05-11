@@ -227,10 +227,7 @@ public class AuthenticationRestController {
     @PutMapping("/Users/UpdatePhoto/{id}")
     public AppUser updateUserPhoto(@PathVariable("id") Long id,
                                    @RequestParam("file") MultipartFile file) throws IOException {
-        AppUser appUser = accountService.getUser(id);
-        appUser.setPhoto(file.getBytes());
-        appUser.setPhotoName(file.getOriginalFilename());
-        return accountService.saveUser(appUser);
+        return accountService.updateUserPhoto(file, id);
     }
 
     @DeleteMapping("/Users/{id}")
@@ -332,8 +329,7 @@ public class AuthenticationRestController {
 
     @PutMapping("/Roles/{id}")
     public AppRole updateRole(@PathVariable Long id, @RequestBody AppRole appRole){
-        appRole.setId(id);
-        return accountService.saveRole(appRole);
+        return accountService.updateRole(id, appRole);
     }
 
 }// AuthenticationRestController
