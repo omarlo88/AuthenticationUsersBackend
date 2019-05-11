@@ -53,13 +53,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AppUser getUser(Long id) {
-        //appUserRepository.findById(id).get();
-        return appUserRepository.getOne(id);
+        return appUserRepository.findById(id).get();
     }
 
     @Override
     public AppRole getRole(Long id) {
-        return appRoleRepository.getOne(id);
+        return appRoleRepository.findById(id).get();
     }
 
     @Override

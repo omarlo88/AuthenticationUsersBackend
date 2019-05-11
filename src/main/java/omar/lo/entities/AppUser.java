@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.TreeSet;
 
 @Entity

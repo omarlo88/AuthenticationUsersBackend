@@ -3,6 +3,8 @@ package omar.lo.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import omar.lo.entities.AppRole;
 import omar.lo.entities.AppUser;
+import omar.lo.entities.AppUserExisteException;
+import omar.lo.entities.ConfirmationPasswordException;
 import omar.lo.metier.AccountServiceImpl;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +42,10 @@ public class AuthenticationRestController {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
         String username = userForm.getUsername();
         AppUser userFromDatabase = accountService.loadUserByUsername(username);
-        if (userFromDatabase!= null){ throw new RuntimeException("Cet utilisateur existe déjà!!");}
+        if (userFromDatabase!= null){ throw new AppUserExisteException(username);}
         String password = userForm.getPassword();
         String confirmedPassword = userForm.getConfirmedPassword();
-        if (!password.equals(confirmedPassword)){ throw new RuntimeException("Veuillez confirmer votre password!");}
+        if (!password.equals(confirmedPassword)){ throw new ConfirmationPasswordException();}
         AppUser appUser = new AppUser();
         appUser.setNom(userForm.getNom());
         appUser.setPrenom(userForm.getPrenom());
@@ -105,10 +107,10 @@ public class AuthenticationRestController {
 
         String username = userForm.getUsername();
         AppUser userFromDatabase = accountService.loadUserByUsername(username);
-        if (userFromDatabase!= null){ throw new RuntimeException("Cet utilisateur existe déjà!!");}
+        if (userFromDatabase!= null){ throw new AppUserExisteException(username);}
         String password = userForm.getPassword();
         String confirmedPassword = userForm.getConfirmedPassword();
-        if (!password.equals(confirmedPassword)){ throw new RuntimeException("Veuillez confirmer votre password!");}
+        if (!password.equals(confirmedPassword)){ throw new ConfirmationPasswordException();}
         AppUser appUser = new AppUser();
         appUser.setNom(userForm.getNom());
         appUser.setPrenom(userForm.getPrenom());
@@ -174,7 +176,7 @@ public class AuthenticationRestController {
     public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){ //File de java old
         Map<String, String> hm = new HashMap<>();
         String filesPath = servletContext.getRealPath("/usersImage");
-        File fileFolder = new File(filesPath); // File de java 7
+        File fileFolder = new File(filesPath); // File de java old
         if (fileFolder != null){
             for (File file : fileFolder.listFiles()) {
                 if (!file.isDirectory() && file.getName().startsWith(username)){
@@ -244,25 +246,25 @@ public class AuthenticationRestController {
     @PutMapping("/Users/ActivedDisabled/{username}")
     public ResponseEntity<String> activedDisabledUser(@PathVariable String username){
         accountService.activedDisabledUser(username);
-        return new ResponseEntity<>("Opération réussie!!", HttpStatus.ACCEPTED.OK);
+        return new ResponseEntity<>("Opération réussie!!", HttpStatus.OK);
     }
 
     @PutMapping("/Users/AccountNonExpired/{username}")
     public ResponseEntity<String> accountNonExpired(@PathVariable String username){
         accountService.accountUserNonExpired(username);
-        return new ResponseEntity<>("Opération réussie!!", HttpStatus.ACCEPTED.OK);
+        return new ResponseEntity<>("Opération réussie!!", HttpStatus.OK);
     }
 
     @PutMapping("/Users/CredentialsNonExpired/{username}")
     public ResponseEntity<String> credentialsNonExpired(@PathVariable String username){
         accountService.credentialsUserNonExpired(username);
-        return new ResponseEntity<>("Opération réussie!!", HttpStatus.ACCEPTED.OK);
+        return new ResponseEntity<>("Opération réussie!!", HttpStatus.OK);
     }
 
     @PutMapping("/Users/AccountNonLocked/{username}")
     public ResponseEntity<String> accountNonLocked(@PathVariable String username){
         accountService.accountUserNonLocked(username);
-        return new ResponseEntity<>("Opération réussie!!", HttpStatus.ACCEPTED.OK);
+        return new ResponseEntity<>("Opération réussie!!", HttpStatus.OK);
     }
 
     @PutMapping("/AddRoleToUser")
