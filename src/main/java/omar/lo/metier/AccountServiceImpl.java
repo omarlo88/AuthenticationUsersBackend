@@ -2,15 +2,16 @@ package omar.lo.metier;
 
 import omar.lo.dao.AppRoleRepository;
 import omar.lo.dao.AppUserRepository;
-import omar.lo.entities.AppRole;
-import omar.lo.entities.AppUser;
+import omar.lo.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -52,23 +53,70 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AppUser updateUser(Long id, AppUser user) {
+        return appUserRepository.findById(id)
+                .map(userDb ->{
+                    userDb.setNom(user.getNom());
+                    userDb.setPrenom(user.getPrenom());
+                    userDb.setUsername(user.getUsername());
+                    userDb.setEmail(user.getEmail());
+                    return appUserRepository.save(userDb);
+                })
+                .orElseGet(()->{
+                    user.setId(id);
+                    return appUserRepository.save(user);
+                });
+    }
+
+    @Override
+    public AppUser updateUserPhoto(MultipartFile file, Long id) {
+        return appUserRepository.findById(id)
+                .map(user ->{
+                    try {
+                        user.setPhoto(file.getBytes());
+                        user.setPhotoName(file.getOriginalFilename());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return appUserRepository.save(user);
+
+                })
+                .orElseThrow(()-> new AppUserNotFoundException(id));
+    }
+
+    @Override
+    public AppRole updateRole(Long id, AppRole role) {
+        return appRoleRepository.findById(id)
+                .map(r ->{
+                    r.setRoleName(role.getRoleName());
+                    return appRoleRepository.save(r);
+                })
+                .orElseGet(()->{
+                    role.setId(id);
+                    return appRoleRepository.save(role);
+                });
+    }
+
+    @Override
     public AppUser getUser(Long id) {
-        return appUserRepository.findById(id).get();
+        return appUserRepository.findById(id)
+                .orElseThrow(() -> new AppUserNotFoundException(id));
     }
 
     @Override
     public AppRole getRole(Long id) {
-        return appRoleRepository.findById(id).get();
+        return appRoleRepository.findById(id)
+                .orElseThrow(() -> new AppRoleNotFoundException(id));
     }
 
     @Override
     public void addRoleToUser(String username, String roleName) {
         AppUser appUser = appUserRepository.findByUsername(username);
-        if (appUser == null){ throw new RuntimeException("Cet utilisateur n'existe pas !!");}
+        if (appUser == null){ throw new AppUserNotFoundException(username);}
         AppRole role = appRoleRepository.findByRoleName(roleName);
-        if (role == null){ throw new RuntimeException("Ce rôle n'existe pas !!");}
+        if (role == null){ throw new AppRoleNotFoundException(roleName);}
         if (appUser.getRoles().contains(role)) {
-            throw new RuntimeException("Cet utilisateur a déjà ce rôle!!");
+            throw new RoleUserExisteException(roleName, username);
         }
         appUser.getRoles().add(role);
     }
@@ -140,7 +188,7 @@ public class AccountServiceImpl implements AccountService {
         if (appUser.getRoles().contains(role)) {
             appUser.getRoles().remove(role);
         } else {
-            throw new RuntimeException("Cet utilisateur n'avait pas ce rôle!!");
+            throw new RoleUserNotFoundException(roleName, username);
         }
     }
 

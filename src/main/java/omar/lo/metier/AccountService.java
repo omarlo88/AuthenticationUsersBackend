@@ -3,6 +3,7 @@ package omar.lo.metier;
 import omar.lo.entities.AppRole;
 import omar.lo.entities.AppUser;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,6 +13,9 @@ public interface AccountService {
     AppRole saveRole(AppRole appRole);
     AppUser loadUserByUsername(String username);
     AppUser loadUserByEmail(String email);
+    AppUser updateUser(Long id, AppUser user);
+    AppUser updateUserPhoto(MultipartFile file, Long id);
+    AppRole updateRole(Long id, AppRole role);
     AppUser getUser(Long id);
     AppRole getRole(Long id);
     void addRoleToUser(String username, String roleName);

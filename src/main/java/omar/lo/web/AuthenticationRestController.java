@@ -38,7 +38,8 @@ public class AuthenticationRestController {
     private ServletContext servletContext;
 
     @PostMapping("/register")
-    public AppUser register(@RequestParam("file") MultipartFile file, String user) throws IOException {
+    public AppUser register(@RequestParam("file") MultipartFile file,
+                            String user) throws IOException {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
         String username = userForm.getUsername();
         AppUser userFromDatabase = accountService.loadUserByUsername(username);
@@ -69,7 +70,8 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/registerServeurFile")
-    public AppUser registerServeurFile(@RequestParam("file") MultipartFile file, String user) throws IOException {
+    public AppUser registerServeurFile(@RequestParam("file") MultipartFile file,
+                                       String user) throws IOException {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
 
         // boolean isExiste = new File(servletContext.getRealPath("/usersImage/")).exists(); // File de java io
@@ -219,12 +221,12 @@ public class AuthenticationRestController {
 
     @PutMapping("/Users/UpdateInfo/{id}")
     public AppUser updateUser(@PathVariable Long id, @RequestBody @Valid AppUser appUser){
-        appUser.setId(id);
-        return accountService.saveUser(appUser);
+        return accountService.updateUser(id, appUser);
     }
 
     @PutMapping("/Users/UpdatePhoto/{id}")
-    public AppUser updateUserPhoto(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) throws IOException {
+    public AppUser updateUserPhoto(@PathVariable("id") Long id,
+                                   @RequestParam("file") MultipartFile file) throws IOException {
         AppUser appUser = accountService.getUser(id);
         appUser.setPhoto(file.getBytes());
         appUser.setPhotoName(file.getOriginalFilename());
