@@ -209,12 +209,18 @@ public class AuthenticationRestController {
         return accountService.getAppUsers();
     }
 
-    @GetMapping("/Users/{username}")
+    @GetMapping("/Users/UsersById/{id}")
+    public AppUser getUser(@PathVariable Long id){
+        return accountService.getUser(id);
+    }
+
+
+    @GetMapping("/Users/UsersByUsername/{username}")
     public AppUser loadUserByUsername(@PathVariable(value = "username") String username){
         return accountService.loadUserByUsername(username);
     }
 
-    @GetMapping("/Users/{eamil}")
+    @GetMapping("/Users/UsersByEmail/{eamil}")
     public AppUser loadUserByEmail(@PathVariable("email") String email){
         return accountService.loadUserByEmail(email);
     }
