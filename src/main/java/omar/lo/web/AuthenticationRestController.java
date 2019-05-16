@@ -173,6 +173,7 @@ public class AuthenticationRestController {
         }
         return null;
     }
+/*
 
     @GetMapping("/Users/PhotoUser/{username}")
     public ResponseEntity<Map<String, String>> getPhotoUser(@PathVariable String username){ //File de java old
@@ -203,6 +204,7 @@ public class AuthenticationRestController {
         }
         return new ResponseEntity<>(hm, HttpStatus.OK);
     }
+*/
 
     @GetMapping("/Users")
     public List<AppUser> getUsers(){
