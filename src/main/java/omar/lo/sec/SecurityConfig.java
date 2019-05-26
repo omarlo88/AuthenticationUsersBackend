@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        /*http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login/**", "/AuthenticationRestController/register/**",
                 "/AuthenticationRestController/registerServeurFile/**",
@@ -37,7 +37,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/AuthenticationRestController/**").hasAuthority("ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new JWTAuthenticationFilter(objectMapper, authenticationManager()));
-        http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);*/
+
+        http.csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests().antMatchers("/login/**", "/AuthenticationRestController/register/**",
+                "/AuthenticationRestController/registerServeurFile/**",
+                "/AuthenticationRestController/Users/PhotoUserNew/**").permitAll()
+                .antMatchers("/AuthenticationRestController/**").hasAuthority("ADMIN")
+                .and()
+                .authorizeRequests().anyRequest().authenticated()
+                .and()
+                .addFilter(new JWTAuthenticationFilter(objectMapper, authenticationManager()))
+                .addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 
 }// SecurityConfig

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -24,7 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser appUser = accountService.loadUserByUsername(username);
         if (appUser == null){throw new UsernameNotFoundException("Invalid User!!");}
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        //Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         /*appUser.getRoles().forEach(appRole -> {
             grantedAuthorities.add(new SimpleGrantedAuthority(appRole.getRoleName()));

@@ -59,13 +59,13 @@ public class AuthenticationRestController {
         accountService.saveUser(appUser);
         accountService.addRoleToUser(username, "USER");
 
-        System.out.println("*****************************");
+        /*System.out.println("*****************************");
         System.out.println(file.getContentType());
         System.out.println(file.getInputStream().toString());
         System.out.println(file.getName());
         System.out.println(file.getResource().getFilename());
         System.out.println(file.getSize());
-        System.out.println("*****************************");
+        System.out.println("*****************************");*/
         return appUser;
     }
 
@@ -78,7 +78,7 @@ public class AuthenticationRestController {
 
         boolean isExiste1 = Files.isDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));// Utilisation de java.nio de java
 
-        if (!isExiste1){ // Files de java.nio de java 8
+        if (!isExiste1){ // Files de java.nio de java 7
             Files.createDirectory(Paths.get(servletContext.getRealPath("/usersImage/")));
         }
         /*
@@ -100,7 +100,7 @@ public class AuthenticationRestController {
 
             Files.write(Paths.get(servletContext.getRealPath("/usersImage") + "/" +newFileName
                             + "." + FilenameUtils.getExtension(fileName)),
-                    file.getBytes()); //# Files de java.nio de java 8 pour écrire le fichier
+                    file.getBytes()); //# Files de java.nio de java 7 pour écrire le fichier
 
         } catch (Exception e){
             System.out.println("AuthenticationRestController.registerServeur(): " + e.getMessage());
