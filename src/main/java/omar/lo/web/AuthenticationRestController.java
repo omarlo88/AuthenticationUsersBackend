@@ -39,7 +39,7 @@ public class AuthenticationRestController {
 
     @PostMapping("/register")
     public AppUser register(@RequestParam("file") MultipartFile file,
-                            String user) throws IOException {
+                            @RequestParam("user") String user) throws IOException {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
         String username = userForm.getUsername();
         AppUser userFromDatabase = accountService.loadUserByUsername(username);
@@ -71,7 +71,7 @@ public class AuthenticationRestController {
 
     @PostMapping("/registerServeurFile")
     public AppUser registerServeurFile(@RequestParam("file") MultipartFile file,
-                                       String user) throws IOException {
+                                       @RequestParam("user") String user) throws IOException {
         UserForm userForm = objectMapper.readValue(user, UserForm.class);
 
         // boolean isExiste = new File(servletContext.getRealPath("/usersImage/")).exists(); // File de java io
